@@ -45,8 +45,7 @@ Required (Used for internal operations such as storing products)| Required (Used
 Required  | Optional | Optional | Optional | Required | Optional | Optional
 
 ## Screenshots
-
-![alt Homepage](https://raw.githubusercontent.com/hasnainnaeem/node-product-manager/master/screenshots/1.png "Home Page")
+![alt Homepage]https://raw.githubusercontent.com/hasnainnaeem/node-project-manager/master/screenshots/1.png"Home Page")
 ![alt Login Panel](https://raw.githubusercontent.com/hasnainnaeem/node-product-manager/master/screenshots/2.png "Login Page")
 ![alt Admin Panel](https://raw.githubusercontent.com/hasnainnaeem/node-product-manager/master/screenshots/3.png "Admin Panel")
 ![alt Seller Panel](https://raw.githubusercontent.com/hasnainnaeem/node-product-manager/master/screenshots/4.png "Seller Panel")
