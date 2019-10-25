@@ -1,0 +1,58 @@
+doctype html
+head
+    meta(charset='UTF-8')
+    title Login - Product Manager
+    link(href='../../stylesheets/bootstrap.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/main.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/bootstrap-grid.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/bootstrap-reboot.css' rel='stylesheet' type='text/css')
+    script(src='../../javascripts/jquery.js')
+style.
+    html, body {
+        height: 94%;
+    }
+    #wrap {
+        min-height: 100%;
+    }
+    #footer {
+        height: 7%;
+    }
+    .btn-primary {
+        background-color: #3b55e6 !important;
+        border-radius: 20px !important;
+        text-transform: uppercase;
+        border: none;
+        padding: 2% 6%;
+    }
+    .btn-primary:hover {
+        background-color: #007bff !important;
+    }
+// Navigation menu
+nav.navbar.navbar-expand-lg.navbar-dark.bg-primary
+    a.navbar-brand(href='../index.html')
+        b Product Manager
+// Main section
+section#wrap
+    br
+    br
+    br
+    h1.text-center.dark Log In
+    #main-section-container.container
+        .shadow-box.container
+            form#login-form(method='post', action='./' + role)
+                label Email or Username
+                br
+                input#email.form-control(placeholder='username@example.com' value='' name='email' required='required')
+                br
+                label Password
+                br
+                input#password.form-control(type='password' name='password' placeholder='********' required='required')
+                br
+                p.text-center
+                    a(href='forgot-password.html') Forgot your password?
+                hr
+                p.text-center
+                    button.btn.btn-primary.btn-lg.btn-lg.btn-block(type='submit') Login
+                p#login-feedback=feedback
+footer#footer
+    p.text-center Product Manager | Designed with &#x2764; by Hasnain Naeem.

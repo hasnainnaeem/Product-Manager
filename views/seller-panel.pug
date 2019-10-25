@@ -1,0 +1,398 @@
+doctype html
+head
+    meta(charset='UTF-8')
+    title Welcome to Product Manager
+    link(href='../../stylesheets/bootstrap.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/main.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/bootstrap-grid.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/bootstrap-reboot.css' rel='stylesheet' type='text/css')
+    script(src='javascripts/jquery.js')
+    script(src='javascripts/bootstrap.bundle.js')
+    script(href='javascripts/bootstrap.js').
+
+
+    style.
+        #main-section-container {padding: 0 30%;}
+        .shadow-box {
+            max-width: 25% !important;
+            padding: 2% 2% !important;
+        }
+
+        .display-section th {
+            text-transform: uppercase;
+            color: white;
+        }
+
+        .modal-body label {
+            color: black !important;
+        }
+
+        .display-section td {
+            color: white;
+        }
+
+    // Navigation menu
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-primary
+        a.navbar-brand(href='../index.html')
+            b Product Manager
+        div.navbar-nav.ml-auto
+            button.btn.btn-outline-light.my-2.my-sm-0(type="button")
+                a.light.simple(href="/logout") Logout&nbsp
+    br
+    br
+    div.shadow-box.container.text-center
+        p.dark Welcome to the seller panel, #{username}!
+    // Main section
+    #main-section-container.container-fluid
+        br
+        br
+        #main-section.container-fluid
+            br
+            h2.text-center Add Products
+            br
+            form#add-product-form(action="./admin-panel/add-product" enctype="multipart/form-data")
+                .form-group
+                    label(for='add-name') Name
+                    input#add-name.form-control(type='text' name='name' placeholder='Teddy Bear' required='required')
+                .form-group
+                    label(for='add-desc') Description
+                    input#add-desc.form-control(type='text' name='description' placeholder='Product looks same as the teddy bear owned by Mr. Beans.')
+                .form-group
+                    label(for='add-price') Price
+                    input#add-price.form-control(type='text' name='price' placeholder='500')
+                .form-group
+                    label(for='add-category') Category
+                    input#add-category.form-control(type='text' name='category' placeholder='toys' required='required')
+                .form-group
+                    label(for='add-name') Image
+                    input#add-image.form-control(type='file' name='image' accept='image/*')
+                button.btn.btn-outline-light.btn-lg.btn-block#user-submit(type='button') Add Product
+                br
+                p#add-product-form-feedback
+        br
+        br
+
+        #main-section.container-fluid
+            br
+            h2.text-center Delete Products
+            br
+            form#delete-form(action="./seller-panel/delete-product")
+                .form-group
+                    label(for='delete-name') Name
+                    input#delete-name.form-control(name='name' placeholder='Product Name')
+                button.btn.btn-outline-light.btn-lg.btn-block#delete-submit(type='button') Delete Product
+                br
+                p#delete-user-form-feedback
+        br
+        br
+
+    #main-section.display-section.container-fluid
+        br
+        h2.text-center Display, Update and Delete Products
+        br
+        form#display-product-form(action="./seller-panel/fetch-products")
+            button.btn.btn-outline-light.btn-lg.btn-block#display-form(type='button') Display Products
+            br
+            // Button trigger modal
+            p#display-product-form-feedback
+        div#products
+        br
+        br
+        // Modal
+        #edit-product-modal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='edit-modal-label' aria-hidden='true')
+            .modal-dialog.modal-dialog-centered(role='document')
+                .modal-content
+                    .modal-header
+                        h5#edit-modal-label.modal-title Edit Product Details
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                            span(aria-hidden='true') &times;
+                    .modal-body
+                        form#edit-form
+                            .form-group
+                                label(for='add-name') Name
+                                input#edit-name.form-control(type='text' name='name' required='required')
+                            .form-group
+                                label(for='edit-description') Description
+                                input#edit-description.form-control(type='text' name='description')
+                            .form-group
+                                label(for='add-price') Price
+                                input#edit-price.form-control(type='text' name='price')
+                            .form-group
+                                label(for='add-category') Category
+                                input#edit-category.form-control(type='text' name='category' required='required')
+                            .form-group
+                                label(for='add-name') Image
+                                input#edit-image.form-control(type='file' name='image' accept='image/*')
+                            p#edit-product-form-feedback
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
+                        button.btn.btn-primary(type='button' id="edit-submit") Save changes
+
+    #footer.container-fluid
+        p.text-center Product Manager | Designed with &#x2764; by Hasnain Naeem.
+
+    script.
+        // handling add products feature
+        // it sends ajax request to the server by encapsulating the JSON
+        // Server responds with JSON
+        // Moreover, it provides feedback to the user according to the action being performed
+        let $productForm = $('#add-product-form');
+        $productForm.prepend('<input id="add-seller" type="text" name="seller" hidden="hidden">');
+        $('#add-seller').val("#{username}");
+        let $addProductFormFeedback = $('#add-product-form-feedback');
+        let productFormFilled = true;
+        $('#user-submit').on('click', function(e){
+            e.preventDefault();
+            productFormFilled =
+                true;
+            $("#user-form :input").not(":button").map(function () {
+                if (!$(this).val()) {
+                    productFormFilled = false;
+                }
+            });
+            if(!productFormFilled) {
+                $addProductFormFeedback.addClass('warning');
+                $addProductFormFeedback.text('Fill all the fields to proceed.').attr('class', 'warning').fadeIn();
+            } else {
+                let details = $productForm.serialize();
+                $.ajax({
+                        type: "POST",
+                        url: "/seller-panel/add-product",
+                        beforeSend: function () {
+                            $addProductFormFeedback.text('Sending data to server and adding to database..')
+                        },
+                        data: JSON.stringify({data: details}),
+                        contentType: "application/json",
+                        dataType: "json"
+                    }
+                ).done(function(data)
+                {
+                    if (data.status === "success") {
+                        $addProductFormFeedback.text("Successfully added the product in database.");
+                        $addProductFormFeedback.attr("class", "feedback");
+                    }  else {
+                        $addProductFormFeedback.text("Failed to add product. Please try again.");
+                        $addProductFormFeedback.attr("class", "warning");
+                    }
+                });
+            }
+        });
+
+        // handling delete product feature
+        // it sends ajax request to the server by encapsulating the JSON
+        // Server responds with JSON
+        // Moreover, tt provides feedback to the user according to the action being performed
+        let $deleteForm = $('#delete-form');
+        $deleteForm.prepend('<input id="delete-seller" type="text" name="seller" hidden="hidden">');
+        $('#delete-seller').val("#{username}");
+        let $inputs = $deleteForm.find(":text");
+        // remove spaces
+        $inputs.each(function(){
+            let $this = $(this);
+            $this.val($this.val().trim());
+        })
+        let $deleteFormFeedback = $('#delete-user-form-feedback');
+        let formFilled = true;
+        $('#delete-submit').on('click', function (e) {
+            e.preventDefault();
+            formFilled = true;
+            $("#delete-form :input").not(":button").map(function () {
+                if (!$(this).val()) {
+                    formFilled = false;
+                }
+            });
+            if (!formFilled) {
+                $deleteFormFeedback.addClass('warning');
+                $deleteFormFeedback.text('Fill all the fields to proceed.').attr('class', 'warning').fadeIn();
+            } else {
+                let details = $deleteForm.serialize();
+                $.ajax({
+                        type: "POST",
+                        url: "/seller-panel/delete-product",
+                        beforeSend: function () {
+                            $deleteFormFeedback.text('Sending data to server and deleting user from the database..')
+                        },
+                        data: JSON.stringify({data: details}),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json"
+                    }
+                ).done(function (data) {
+                    if (data.status === "success") {
+                        $deleteFormFeedback.text("Successfully deleted the product in database.");
+                        $deleteFormFeedback.attr("class", "feedback");
+                    }
+                   else {
+                        $deleteFormFeedback.text("Failed to delete product. Please try again.");
+                        $deleteFormFeedback.attr("class", "warning");
+                    }
+                });
+            }
+        });
+
+        // handling display products feature and adding buttons to edit and delete each product
+        let currName = "";
+        let currDesc = "";
+        let currPrice = "";
+        let currCategory = "";
+        let $displayForm = $('#display-product-form');
+        $displayForm.prepend('<input id="display-seller" type="text" name="seller" hidden="hidden">');
+        $('#display-seller').val("#{username}");
+        let $displayProductFeedback = $('#display-product-form-feedback');
+        let details = $displayForm.serialize();
+        $("#display-form").on('click', function (e) {
+            e.preventDefault();
+            $.ajax({
+                    type: "POST",
+                    url: "/seller-panel/fetch-products",
+                    data: JSON.stringify({data: details}),
+                    beforeSend: function () {
+                        $displayProductFeedback.text('Fetching data from the database..')
+                    },
+                    contentType: "application/json",
+                    dataType: "json"
+                }
+            ).done(function (data) {
+                if (data.status === "success") {
+                    $displayProductFeedback.text("");
+                    let productsArr = data.products;
+                    let htmlContent = "<table class='table-striped table'>" +
+                        "<thead class='thead-dark'>" +
+                        "<tr>" +
+                        "<th scope='col'>#</th>" +
+                        "<th scope='col'>Name</th>" +
+                        "<th scope='col'>Description</th>" +
+                        "<th scope='col'>Price</th>" +
+                        "<th scope='col'>Category</th>" +
+                        "</tr>" +
+                        "</thead>" +
+                        "<tbody>"
+                    for(let i =0; i < productsArr.length; i++){
+                        htmlContent += "<tr>"
+                        htmlContent += "<th scope='row'>" + (i+1) +"</th>";
+                        htmlContent += "<td class='name'>" + productsArr[i].name + "</td>";
+                        htmlContent += "<td class='description'>" + productsArr[i].description + "</td>";
+                        htmlContent += "<td class='price'>" + productsArr[i].price + "</td>";
+                        htmlContent += "<td class='category'>" + productsArr[i].category + "</td>";
+                        htmlContent += "</tr>";
+                    }
+                    htmlContent += '</tbody></table>';
+                    $('div#products').html(htmlContent);
+
+                    // modal used to edit the details of product
+                    let $editForm = $('#edit-product-modal');
+
+                    // adding edit and remove buttons on each record
+                    let $rows = $('#products tr:gt(0)');
+                    $rows.on('click', function (e) {
+                        // add the buttons
+                        if(!$rows.find('button').length){
+                            // get details of the selected product (to fill the modal form when edit button is clicked)
+                            let $selectedRow = $(e.target.parentNode);
+                            currName = $selectedRow.find('.name').text();
+                            currDesc = $selectedRow.find('.description').text();
+                            currPrice = $selectedRow.find('.price').text();
+                            currCategory = $selectedRow.find('.category').text();
+
+                            $(this).append('<button type="button" id="edit" class="btn btn-primary" data-toggle="modal" data-target="#edit-product-modal">' +
+                                'Edit' +
+                                '</button>&nbsp');
+                            $(this).append('<button type="button" id="remove" class="btn btn-primary">' +
+                                'Remove' +
+                                '</button>');
+
+                            // set the values in modal form to be used later on
+                            $editForm.find('#edit-name').val(currName);
+                            $editForm.find('#edit-description').val(currDesc);
+                            $editForm.find('#edit-price').val(currPrice);
+                            $editForm.find('#edit-category').val(currCategory);
+
+                            // make buttons appear
+                            $(this).find('button').hide().fadeIn(300);
+
+                            // removing record when remove is clicked on a record in displayed records
+                            $('#remove').on('click', function (e) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                console.log('in')
+                                let details = {};
+                                details.seller = '#{username}';
+                                details.name = currName;
+                                details.description = currDesc;
+                                details.price = currPrice;
+                                details.category = currCategory;
+                                console.log(details);
+                                $.ajax({
+                                        type: "POST",
+                                        url: "/seller-panel/delete-product",
+                                        data: JSON.stringify({fullData: details}),
+                                        contentType: "application/json; charset=utf-8",
+                                        dataType: "json"
+                                    }
+                                ).done(function (data) {
+                                    if (data.status === "success") {
+                                        $("#display-form").trigger('click');
+                                    } else {
+                                        $deleteFormFeedback.text("Failed to delete product. Please try again.");
+                                        $deleteFormFeedback.attr("class", "warning");
+                                    }
+                                });
+                            })
+                        }
+                        else if (e.target.innerText !== "remove") { // if the remove button is pressed then don't remove it
+                            // because there are events attached to it yet to be handled
+                            $(this).find('button').fadeOut(300, function () {
+                                $(this).remove();
+                            });
+                        }
+                    });
+                } else {
+                    $displayProductFeedback.text("Failed to fetch data from the server. Please try again.");
+                    $displayProductFeedback.attr("class", "warning");
+                }
+            });
+        });
+
+        let $editForm = $('#edit-form');
+        $editForm.prepend('<input id="edit-seller" type="text" name="seller" hidden="hidden">');
+        $('#edit-seller').val("#{username}");
+        let $editProductFormFeedback = $('#edit-product-form-feedback');
+        let editFormFilled = true;
+        $('#edit-submit').on('click', function (e) {
+            e.preventDefault();
+            editFormFilled = true;
+            $("#edit-form :text").not(":button").map(function () {
+                if (!$(this).val()) {
+                    editFormFilled = false;
+                }
+            });
+            if (!editFormFilled) {
+                $editProductFormFeedback.addClass('warning');
+                $editProductFormFeedback.text('Fill all the fields to proceed.').attr('class', 'warning').fadeIn();
+            } else {
+                let details = $editForm.serialize();
+                let data = JSON.stringify({data: details, prevData: prevDetails});
+                console.log(data);
+                $.ajax({
+                        type: "POST",
+                        url: "/seller-panel/edit-product",
+                        beforeSend: function () {
+                            $editProductFormFeedback.text('Sending data to server and adding to database..')
+                        },
+                        data: data,
+                        contentType: "application/json",
+                        dataType: "json"
+                    }
+                ).done(function (data) {
+                    console.log(data.result);
+                    if (data.status === "success") {
+                        $editProductFormFeedback.text("Successfully added the new details in database.");
+                        $editProductFormFeedback.attr("class", "feedback");
+                        $("#display-form").trigger('click');
+                    } else {
+                        $editProductFormFeedback.text("Failed to edit product. Please try again.");
+                        $editProductFormFeedback.attr("class", "warning");
+                    }
+                });
+            }
+        });
+

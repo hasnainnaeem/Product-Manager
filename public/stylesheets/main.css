@@ -1,0 +1,97 @@
+.navbar-dark {
+    background: #3b55e6 !important;
+}
+
+#main-section-container {
+    padding: 2% 10%;
+}
+
+#main-section {
+    padding: 2% 30%;
+    -webkit-box-shadow: rgba(9, 132, 227,1.0) 1px 1px 20px;
+    -moz-box-shadow: rgba(9, 132, 227,1.0) 1px 1px 20px;
+    box-shadow: rgba(9, 132, 227,1.0) 1px 1px 20px;
+    overflow: auto;
+    background: linear-gradient(rgba(9, 132, 227,1.0), rgba(255, 118, 117,1.0));
+    background-size: cover;
+}
+
+
+#main-section h1,  #main-section h2, #main-section h3 {
+    color: white;
+}
+
+.light {
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.dark {
+    color: black;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.light-text {
+    color: white;
+}
+
+.btn-outline-light:hover>a {
+    color: #3b55e6;
+}
+
+a.simple:hover {
+    text-decoration: none;
+}
+
+.btn-sm {
+    margin-left: 1%;
+}
+
+.warning {
+    color: red;
+}
+.feedback {
+    color: green;
+}
+
+#main-section label {
+    font-weight: bold;
+    color: white;
+}
+
+#footer {
+    background: #3b55e6;
+    color: white;
+    padding: 1% 2%;
+}
+
+div.shadow-box {
+    max-width: 40%;
+    box-shadow: #424242 0 0 10px;
+    padding: 5%;
+}
+
+/* For scroll bar */
+body::-webkit-scrollbar {
+    width: .8em;
+    border-radius: 1000px;
+}
+
+body::-webkit-scrollbar-track {
+    border: 2px solid #3b55e6;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #3b55e6;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background-color: #3b55e6;
+}
+
+body::-webkit-scrollbar-thumb:active {
+    background-color: white;
+}
+

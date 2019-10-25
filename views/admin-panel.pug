@@ -1,0 +1,242 @@
+doctype html
+head
+    meta(charset='UTF-8')
+    title Welcome to Product Manager
+    link(href='../../stylesheets/bootstrap.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/main.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/bootstrap-grid.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/bootstrap-reboot.css' rel='stylesheet' type='text/css')
+    script(src='../../javascripts/jquery.js')
+
+    style.
+        #main-section-container {padding: 0 30%;}
+        .shadow-box {
+            max-width: 25% !important;
+            padding: 2% 2% !important;
+        }
+
+        .display-section th {
+            text-transform: uppercase;
+            color: white;
+        }
+
+        .display-section td {
+            color: white;
+        }
+
+    // Navigation menu
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-primary
+        a.navbar-brand(href='../index.html')
+            b Product Manager
+        div.navbar-nav.ml-auto
+            button.btn.btn-outline-light.my-2.my-sm-0(type="button")
+                a.light.simple(href="/logout") Logout&nbsp
+    br
+    br
+    div.shadow-box.container.text-center
+        p.dark Welcome to the admin panel, #{username}!
+    // Main section
+    #main-section-container.container-fluid
+        br
+        br
+        #main-section.container-fluid
+            br
+            h2.text-center Add Users
+            br
+            form#user-form(action="./admin-panel/add-user")
+                .form-group
+                    label(for='email') Email address
+                    input#email.form-control(type='email' name='email' placeholder='name@example.com' required='required')
+                .form-group
+                    label(for='username') Username
+                    input#username.form-control(name='username' placeholder='username' required='required')
+                .form-group
+                    label(for='role') User Role
+                    select#role.form-control(name='role')
+                        option Buyer
+                        option Seller
+                .form-group
+                    label(for='password') Password
+                    input#password.form-control(type='password' name='password' placeholder='********')
+                button.btn.btn-outline-light.btn-lg.btn-block#user-submit(type='button') Add User
+                br
+                p#add-user-form-feedback
+        br
+        br
+
+        #main-section.container-fluid
+            br
+            h2.text-center Delete Users
+            br
+            form#delete-form(action="./admin-panel/delete-user")
+                .form-group
+                    label(for='delete-username') Username
+                    input#delete-username.form-control(name='username' placeholder='username')
+                .form-group
+                    label(for='delete-role') User Role
+                    select#delete-role.form-control(name='role')
+                        option Buyer
+                        option Seller
+                button.btn.btn-outline-light.btn-lg.btn-block#delete-submit(type='button') Delete User
+                br
+                p#delete-user-form-feedback
+        br
+        br
+
+    #main-section.display-section.container-fluid
+        br
+        h2.text-center Display Users
+        br
+        form#display-user-form(action="./admin-panel/fetch-users")
+            .form-group
+                label(for='role') User Role
+                select.role.form-control(name='role')
+                    option Buyer
+                    option Seller
+            button.btn.btn-outline-light.btn-lg.btn-block#display-form(type='button') Display Users
+            br
+            p#display-user-form-feedback
+        div#users
+        br
+        br
+    #footer.container-fluid
+        p.text-center Product Manager | Designed with &#x2764; by Hasnain Naeem.
+
+    script.
+
+        // handling add users feature
+        // it sends ajax request to the server by encapsulating the JSON
+        // Server responds with JSON
+        // Moreover, it provides feedback to the user according to the action being performed
+        let $userForm = $('#user-form');
+        let $formFeedback = $('#add-user-form-feedback');
+        let addFormFilled = true;
+        $('#user-submit').on('click', function(e){
+            e.preventDefault();
+            addFormFilled = true;
+            $("#user-form :input").not(":button").map(function () {
+                if (!$(this).val()) {
+                    addFormFilled = false;
+                }
+            });
+            if(!addFormFilled) {
+                $formFeedback.addClass('warning');
+                $formFeedback.text('Fill all the fields to proceed.').attr('class', 'warning').fadeIn();
+            } else {
+                let details = $userForm.serialize();
+                $.ajax({
+                        type: "POST",
+                        url: "/admin-panel/add-user",
+                        beforeSend: function () {
+                            $formFeedback.text('Sending data to server and adding to database..')
+                        },
+                        data: JSON.stringify({data: details}),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json"
+                    }
+                ).done(function(data)
+                {
+                    if (data.status === "success") {
+                        $formFeedback.text("Successfully added the user in database.");
+                        $formFeedback.attr("class", "feedback");
+                    } else if (data.status === "duplicate") {
+                        $formFeedback.text("Error: user with same email or username already exists in database.");
+                        $formFeedback.attr("class", "warning");
+                    }  else {
+                        $formFeedback.text("Failed to add user. Please try again.");
+                        $formFeedback.attr("class", "warning");
+                    }
+                });
+            }
+        });
+
+        // handling delete user feature
+        // it sends ajax request to the server by encapsulating the JSON
+        // Server responds with JSON
+        // Moreover, tt provides feedback to the user according to the action being performed
+        let $deleteForm = $('#delete-form');
+        let $deleteFormFeedback = $('#delete-user-form-feedback');
+        let formFilled = true;
+        $('#delete-submit').on('click', function (e) {
+            e.preventDefault();
+            formFilled = true;
+            $("#delete-form :input").not(":button").map(function () {
+                if (!$(this).val()) {
+                    formFilled = false;
+                }
+            });
+            if (!formFilled) {
+                $deleteFormFeedback.addClass('warning');
+                $deleteFormFeedback.text('Fill all the fields to proceed.').attr('class', 'warning').fadeIn();
+            } else {
+                let details = $deleteForm.serialize();
+                $.ajax({
+                        type: "POST",
+                        url: "/admin-panel/delete-user",
+                        beforeSend: function () {
+                            $deleteFormFeedback.text('Sending data to server and deleting user from the database..')
+                        },
+                        data: JSON.stringify({data: details}),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json"
+                    }
+                ).done(function (data) {
+                    console.log(data);
+                    if (data.status === "success") {
+                        $deleteFormFeedback.text("Successfully deleted the user in database.");
+                        $deleteFormFeedback.attr("class", "feedback");
+                    } else {
+                        $deleteFormFeedback.text("Failed to delete user. Please try again.");
+                        $deleteFormFeedback.attr("class", "warning");
+                    }
+                });
+            }
+        });
+
+        // handling display users feature
+        let $displayUsersForm = $('#display-user-form');
+        let $displayFormFeedback = $('#display-user-form-feedback');
+        $('#display-form').on('click', function (e) {
+            e.preventDefault();
+            let details = $displayUsersForm.serialize();
+            $.ajax({
+                    type: "POST",
+                    url: "/admin-panel/fetch-users",
+                    beforeSend: function () {
+                        $displayFormFeedback.text('Fetching data from the database..')
+                    },
+                    data: JSON.stringify({data: details}),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }
+            ).done(function (data) {
+                if (data.status === "success") {
+                    $displayFormFeedback.text("");
+                    let usersArr = data.users;
+                    console.log(usersArr);
+                    let htmlContent = "<table class='table-striped table'>" +
+                        "<thead class='thead-dark'>" +
+                        "<tr>" +
+                        "<th scope='col'>#</th>" +
+                        "<th scope='col'>Email</th>" +
+                        "<th scope='col'>Username</th>" +
+                        "<th scope='col'>Password</th>" +
+                        "</tr>" +
+                        "</thead>" +
+                        "<tbody>"
+                    for(let i =0; i < usersArr.length; i++){
+                        htmlContent += "<tr>"
+                        htmlContent += "<th scope='row'>" + (i+1) +"</th>";
+                        htmlContent += "<td>" + usersArr[i].email + "</td>";
+                        htmlContent += "<td>" + usersArr[i].username + "</td>";
+                        htmlContent += "<td>" + usersArr[i].password + "</td>";
+                        htmlContent += "</tr>"
+                    }
+                    htmlContent += '</tbody></table>';
+                    $('div#users').html(htmlContent);
+                } else {
+                    $displayFormFeedback.text("Failed to fetch data from the server. Please try again.");
+                    $displayFormFeedback.attr("class", "warning");
+                }
+            });
+        });

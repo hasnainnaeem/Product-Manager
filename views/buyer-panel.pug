@@ -1,0 +1,214 @@
+doctype html
+head
+    meta(charset='UTF-8')
+    title Welcome to Product Manager
+    link(href='../../stylesheets/bootstrap.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/main.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/bootstrap-grid.css' rel='stylesheet' type='text/css')
+    link(href='../../stylesheets/bootstrap-reboot.css' rel='stylesheet' type='text/css')
+    script(src='../../javascripts/jquery.js')
+
+    style.
+        #main-section-container {padding: 0 30%;}
+        .shadow-box {
+            max-width: 25% !important;
+            padding: 2% 2% !important;
+        }
+
+        .display-section th {
+            text-transform: uppercase;
+            color: white;
+        }
+
+        .display-section td {
+            color: white;
+        }
+
+
+    // Navigation menu
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-primary
+        a.navbar-brand(href='../index.html')
+            b Product Manager
+        div.navbar-nav.ml-auto
+            button.btn.btn-outline-light.my-2.my-sm-0(type="button")
+                a.light.simple(href="/logout") Logout&nbsp
+    br
+    br
+    div.shadow-box.container.text-center
+        p.dark Welcome to the buyer panel, #{username}!
+    br
+    br
+    #main-section.display-section.container-fluid
+        br
+        h2.text-center Display Products
+        br
+        form#display-product-form(action="./buyer-panel/fetch-products")
+            button.btn.btn-outline-light.btn-lg.btn-block#display-form(type='button') Display Products
+            br
+            p#display-product-form-feedback
+        div#products
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    #footer.container-fluid
+        p.text-center Product Manager | Designed with &#x2764; by Hasnain Naeem.
+
+    script.
+
+        // handling add products feature
+        // it sends ajax request to the server by encapsulating the JSON
+        // Server responds with JSON
+        // Moreover, it provides feedback to the user according to the action being performed
+        let $productForm = $('#add-product-form');
+        $productForm.prepend('<input id="add-seller" type="text" name="seller" hidden="hidden">');
+        $('add-seller').val("#{username}");
+        let $addProductFormFeedback = $('#add-product-form-feedback');
+        let productFormFilled = true;
+        $('#user-submit').on('click', function(e){
+            e.preventDefault();
+            productFormFilled = true;
+            $("#user-form :input").not(":button").map(function () {
+                if (!$(this).val()) {
+                    productFormFilled = false;
+                }
+            });
+            if(!productFormFilled) {
+                $addProductFormFeedback.addClass('warning');
+                $addProductFormFeedback.text('Fill all the fields to proceed.').attr('class', 'warning').fadeIn();
+            } else {
+                let details = $productForm.serialize();
+                $.ajax({
+                        type: "POST",
+                        url: "/buyer-panel/add-product",
+                        beforeSend: function () {
+                            $addProductFormFeedback.text('Sending data to server and adding to database..')
+                        },
+                        data: JSON.stringify({data: details}),
+                        contentType: "application/json",
+                        dataType: "json"
+                    }
+                ).done(function(data)
+                {
+                    if (data.status === "success") {
+                        $addProductFormFeedback.text("Successfully added the product in database.");
+                        $addProductFormFeedback.attr("class", "feedback");
+                    }  else {
+                        $addProductFormFeedback.text("Failed to add product. Please try again.");
+                        $addProductFormFeedback.attr("class", "warning");
+                    }
+                });
+            }
+        });
+
+        // handling delete product feature
+        // it sends ajax request to the server by encapsulating the JSON
+        // Server responds with JSON
+        // Moreover, tt provides feedback to the user according to the action being performed
+        let $deleteForm = $('#delete-form');
+        let $inputs = $deleteForm.find(":text");
+        // remove spaces
+        $inputs.each(function(){
+            let $this = $(this);
+            $this.val($this.val().trim());
+        })
+        let $deleteFormFeedback = $('#delete-product-form-feedback');
+        let formFilled = true;
+        $('#delete-submit').on('click', function (e) {
+            e.preventDefault();
+            formFilled = true;
+            $("#delete-form :input").not(":button").map(function () {
+                if (!$(this).val()) {
+                    formFilled = false;
+                }
+            });
+            if (!formFilled) {
+                $deleteFormFeedback.addClass('warning');
+                $deleteFormFeedback.text('Fill all the fields to proceed.').attr('class', 'warning').fadeIn();
+            } else {
+                let details = $deleteForm.serialize();
+                $.ajax({
+                        type: "POST",
+                        url: "/buyer-panel/delete-product",
+                        beforeSend: function () {
+                            $deleteFormFeedback.text('Sending data to server and deleting user from the database..')
+                        },
+                        data: JSON.stringify({data: details}),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json"
+                    }
+                ).done(function (data) {
+                    console.log(data);
+                    if (data.status === "success") {
+                        $deleteFormFeedback.text("Successfully deleted the product in database.");
+                        $deleteFormFeedback.attr("class", "feedback");
+                    }
+                    else {
+                        $deleteFormFeedback.text("Failed to delete product. Please try again.");
+                        $deleteFormFeedback.attr("class", "warning");
+                    }
+                });
+            }
+        });
+
+        // handling display products feature
+        let $displayProductFeedback = $('#display-product-form-feedback');
+        $('#display-form').on('click', function (e) {
+            e.preventDefault();
+            $.ajax({
+                    type: "POST",
+                    url: "/buyer-panel/fetch-products",
+                    beforeSend: function () {
+                        $displayProductFeedback.text('Fetching data from the database..')
+                    },
+                    contentType: "application/json",
+                    dataType: "json"
+                }
+            ).done(function (data) {
+                let review = "None";
+                if (data.status === "success") {
+                    $displayProductFeedback.text("");
+                    let productsArr = data.products;
+                    let htmlContent = "<table class='table-striped table'>" +
+                        "<thead class='thead-dark'>" +
+                        "<tr>" +
+                        "<th scope='col' style='width: 10%'>#</th>" +
+                        "<th scope='col' class='name' style='width: 10%'>Name</th>" +
+                        "<th scope='col' class='description' style='width: 40%'>Description</th>" +
+                        "<th scope='col' class='price' style='width: 10%'>Price</th>" +
+                        "<th scope='col' class='category' style='width: 10%'>Category</th>" +
+                        "<th scope='col' class='seller' style='width: 10%'>Seller</th>" +
+                        "<th scope='col' class='review' style='width: 10%'>Review</th>" +
+                        "</tr>" +
+                        "</thead>" +
+                        "<tbody>"
+                    for(let i =0; i < productsArr.length; i++){
+                        review =productsArr[i].review;
+                        if(!review)
+                            review = "Not Reviewed Yet";
+                        htmlContent += "<tr>"
+                        htmlContent += "<th scope='row'>" + (i+1) +"</th>";
+                        htmlContent += "<td class='name'>" + productsArr[i].name + "</td>";
+                        htmlContent += "<td class='description'>" + productsArr[i].description + "</td>";
+                        htmlContent += "<td class='price'>" + productsArr[i].price + " PKR</td>";
+                        htmlContent += "<td class='category'>" + productsArr[i].category + "</td>";
+                        htmlContent += "<td class='seller'>" + productsArr[i].seller + "</td>";
+                        htmlContent += "<td class='review'>" + review + "</td>";
+                        htmlContent += "</tr>"
+                    }
+                    htmlContent += '</tbody></table>';
+                    $('div#products').html(htmlContent);
+                } else {
+                    $displayProductFeedback.text("Failed to fetch data from the server. Please try again.");
+                    $displayProductFeedback.attr("class", "warning");
+                }
+            });
+        });
