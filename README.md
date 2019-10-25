@@ -1,4 +1,4 @@
-# node-project-manager
+# Product Manager
  A responsive product managing website with admin, buyer and seller panels created using node.js (express) on server-side and jquery 
  on client-side. It was created whilst learning node.js (~15 hours spent and 5 cups of coffee were consumed).
  ### Implemented Features
