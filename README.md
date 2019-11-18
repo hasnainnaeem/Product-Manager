@@ -5,9 +5,9 @@
 - [x] Admin(s) can add, delete and view users.
 - [x] Sellers can add, edit, delete and view products. 
 - [x] Buyer can view the products.
-- [x] Sessions are used to prevent access to admin, buyer and seller panels without logging in.
-- [x] XSS and no-sql injections are considered (not thoroughly).
-- [x] AJAX is used to communicate with the server-side to for dynamic experience.
+- [x] Cookies and sessions are used to prevent access to admin, buyer and seller panels without authorization.
+- [x] XSS and no-sql injections are considered (not thoroughly) whilst adding data entered by user to database. 
+- [x] Jquery and AJAX are used to communicate with the server-side for dynamic experience.
 - [x] Responsive and elegant design.
 - [x] Appropriate feedback is provided to user in case of actions and errors on both client-side and server-side (through AJAX)
 ### Remaining Features
