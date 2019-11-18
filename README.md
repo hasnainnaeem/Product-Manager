@@ -48,12 +48,12 @@ Required  | Optional | Optional | Optional | Required | Optional | Optional
 ### Home Page
 ![alt Homepage](./screenshots/1.png "Home Page")
 ### Login Page
-![alt Login Panel](https://raw.githubusercontent.com/hasnainnaeem/node-project-manager/master/screenshots/2.png "Login Page")
+![alt Login Panel](./screenshots/2.png "Login Page")
 ### Admin Panel
-![alt Admin Panel](https://raw.githubusercontent.com/hasnainnaeem/node-project-manager/master/screenshots/3.png "Admin Panel")
+![alt Admin Panel](./screenshots/3.png "Admin Panel")
 ### Seller Panel
-![alt Seller Panel](https://raw.githubusercontent.com/hasnainnaeem/node-project-manager/master/screenshots/4.png "Seller Panel")
+![alt Seller Panel](./screenshots/4.png "Seller Panel")
 ### Buyer Panel
-![alt Buyer Panel](https://raw.githubusercontent.com/hasnainnaeem/node-project-manager/master/screenshots/5.png "Buyer Panel")
+![alt Buyer Panel](./screenshots/5.png "Buyer Panel")
 ### Restricted Page
-![alt Restricted Page](https://raw.githubusercontent.com/hasnainnaeem/node-project-manager/master/screenshots/6.png "Restricted Page")
+![alt Restricted Page](./screenshots/6.png "Restricted Page")
