@@ -1,11 +1,11 @@
 # Product Manager
  A responsive product managing website with admin, buyer and seller panels created using node.js (express) on server-side and jquery 
- on client-side. It was created whilst learning node.js (~15 hours spent and 5 cups of coffee were consumed).
+ on client-side. It was created from scratch whilst learning Express.JS & Pug. (~15 hours spent and 5 cups of coffee consumed).
  ### Implemented Features
+- [x] Authentication system. Cookies and sessions are used to prevent access to admin, buyer and seller panels without authorization.
 - [x] Admin(s) can add, delete and view users.
 - [x] Sellers can add, edit, delete and view products. 
 - [x] Buyer can view the products.
-- [x] Cookies and sessions are used to prevent access to admin, buyer and seller panels without authorization.
 - [x] XSS and no-sql injections are considered (not thoroughly) whilst adding data entered by user to database. 
 - [x] Jquery and AJAX are used to communicate with the server-side for dynamic experience.
 - [x] Responsive and elegant design.
@@ -22,19 +22,18 @@
     3.	Run the server. That’s it.
 
 ## Database Collections
-## Users 
-Different collections are used because a person can be a seller and buyer at the same time.
-#### Admin
+Different collections are used for buyers and sellers because a person can be a seller and buyer at the same time.
+### Admin
  Username | Email | Password 
  ------------- | ------------- | ------
 Required (Used for internal operations such as storing products)| Required (Used to login) | Required (Not hashed)
  
- #### Buyer
+ ### Buyer
  Username | Email | Password 
  ------------- | ------------- | ------
 Required (Used for internal operations such as storing products)| Required (Used to login) | Required (Not encrypted)
  
- #### Seller
+ ### Seller
  Username | Email | Password 
  ------------- | ------------- | ------
 Required (Used for internal operations such as storing products)| Required (Used to login) | Required (Not encrypted)
